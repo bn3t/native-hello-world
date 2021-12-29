@@ -59,7 +59,10 @@ jobs:
         with:
           path: artifacts
       - name: Untar
-        run: tar xvfz
+        run: tar xvfz *.tar.gz
+        shell: bash
+      - name: Verify
+        run: ls -R prebuilds
         shell: bash
       - uses: JS-DevTools/npm-publish@v1
         with:
