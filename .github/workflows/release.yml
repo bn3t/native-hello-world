@@ -59,10 +59,14 @@ jobs:
         with:
           path: artifacts
       - name: ls
-        run: ls -R prebuilds
+        run: ls -R
         shell: bash
       - name: Untar
-        run: mkdir prebuilds && tar xvfz artifacts/win32-x64.tar.gz -C prebuilds
+        run: |
+          mkdir prebuilds
+          tar xvfz artifacts/linux-x64.tar.gz -C prebuilds
+          tar xvfz artifacts/darwin-x64+arm64.tar.gz -C prebuilds
+          tar xvfz artifacts/win32-x64.tar.gz -C prebuilds
         shell: bash
       - name: Verify
         run: ls -R prebuilds
