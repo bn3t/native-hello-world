@@ -58,8 +58,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
+      - name: ls
+        run: ls -R prebuilds
+        shell: bash
       - name: Untar
-        run: mkdir prebuilds && tar  -C prebuilds xvfz *.tar.gz
+        run: mkdir prebuilds && tar xvfz artifacts/win32-x64.tar.gz -C prebuilds
         shell: bash
       - name: Verify
         run: ls -R prebuilds
