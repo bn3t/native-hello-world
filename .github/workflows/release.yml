@@ -59,7 +59,7 @@ jobs:
         with:
           path: artifacts
       - name: Untar
-        run: mkdir prebuilds && tar xvfz -C prebuilds *.tar.gz
+        run: mkdir prebuilds && tar  -C prebuilds xvfz *.tar.gz
         shell: bash
       - name: Verify
         run: ls -R prebuilds
