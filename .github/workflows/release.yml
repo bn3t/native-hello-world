@@ -68,16 +68,16 @@ jobs:
       - name: Verify
         run: ls -R
         shell: bash
-      # Publish to npm if this version is not published
-      - name: Publish
-        run: |
-          npx can-npm-publish --verbose && npm publish || echo "Does not publish"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: publish
+        id: publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
       # Push tag to GitHub if the version's tag is not tagged
       - name: package-version
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
-      - name: package-version-to-git-tag
+      - if: steps.publish.outputs.type != 'none'
+        name: package-version-to-git-tag
         uses: pkgdeps/git-tag-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
