@@ -1,7 +1,8 @@
 name: Release
 on:
   push:
-    tags: ["*"]
+    branches:
+      - master
 jobs:
   build:
     permissions:
@@ -47,7 +48,7 @@ jobs:
   release:
     needs: build
     permissions:
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
     name: Release
     steps:
@@ -57,9 +58,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
-      - name: ls
-        run: ls -R
-        shell: bash
       - name: Untar
         run: |
           mkdir prebuilds
@@ -70,8 +68,20 @@ jobs:
       - name: Verify
         run: ls -R
         shell: bash
-      - uses: JS-DevTools/npm-publish@v1
+      # Publish to npm if this version is not published
+      - name: Publish
+        run: |
+          npx can-npm-publish --verbose && npm publish || echo "Does not publish"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Push tag to GitHub if the version's tag is not tagged
+      - name: package-version
+        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+      - name: package-version-to-git-tag
+        uses: pkgdeps/git-tag-action@v2
         with:
-          token: ${{ secrets.NPM_TOKEN }}
-          dry-run: true
-          access: "public"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
+          version: ${{ env.PACKAGE_VERSION }}
+          git_commit_sha: ${{ github.sha }}
+          git_tag_prefix: "v"
