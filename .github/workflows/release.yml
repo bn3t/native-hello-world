@@ -65,9 +65,6 @@ jobs:
           tar xvfz artifacts/darwin-x64+arm64/darwin-x64+arm64.tar.gz -C prebuilds
           tar xvfz artifacts/win32-x64/win32-x64.tar.gz -C prebuilds
         shell: bash
-      - name: Verify
-        run: ls -R
-        shell: bash
       - name: publish
         id: publish
         uses: JS-DevTools/npm-publish@v1
